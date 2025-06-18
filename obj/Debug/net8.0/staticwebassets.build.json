@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "nglyPYLUhyEcNFMXXFfIGmZAe2p4T0hPBfEKcW5D/Xo=",
+  "Source": "DMCPortal.API",
+  "BasePath": "_content/DMCPortal.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
