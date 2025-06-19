@@ -1,10 +1,9 @@
+D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\bin\Debug\net8.0\DMCPortal.API.dll
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\bin\Debug\net8.0\appsettings.Development.json
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\bin\Debug\net8.0\appsettings.json
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\bin\Debug\net8.0\DMCPortal.API.exe
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\bin\Debug\net8.0\DMCPortal.API.deps.json
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\bin\Debug\net8.0\DMCPortal.API.runtimeconfig.json
-D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\bin\Debug\net8.0\DMCPortal.API.dll
-D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\bin\Debug\net8.0\DMCPortal.API.pdb
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\bin\Debug\net8.0\Azure.Core.dll
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\bin\Debug\net8.0\Azure.Identity.dll
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\bin\Debug\net8.0\BCrypt.Net-Next.dll
@@ -155,6 +154,7 @@ D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\DMC
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\DMCPortal.API.AssemblyInfo.cs
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\DMCPortal.API.csproj.CoreCompileInputs.cache
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\DMCPortal.API.MvcApplicationPartsAssemblyInfo.cache
+D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\DMCPortal.API.sourcelink.json
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\staticwebassets.build.json
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\staticwebassets.development.json
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\staticwebassets\msbuild.DMCPortal.API.Microsoft.AspNetCore.StaticWebAssets.props
@@ -168,4 +168,5 @@ D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\DMC
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\refint\DMCPortal.API.dll
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\DMCPortal.API.pdb
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\DMCPortal.API.genruntimeconfig.cache
+D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\bin\Debug\net8.0\DMCPortal.API.pdb
 D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\obj\Debug\net8.0\ref\DMCPortal.API.dll

@@ -151,6 +151,27 @@ namespace DMCPortal.API.Controllers
             return Ok(users);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            // Remove roles first
+            var roles = context.UserRoles.Where(ur => ur.UserId == id);
+            context.UserRoles.RemoveRange(roles);
+
+            // Then remove user
+            context.Users.Remove(user);
+
+            await context.SaveChangesAsync();
+            return Ok(new { message = "User and roles deleted successfully" });
+        }
+
+
+
+
+
     }
 }
 

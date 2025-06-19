@@ -2,6 +2,7 @@
 {
     public class RegisterRequest
     {
+        public int UserId { get; set; }
         public string EmailAddress { get; set; }
         public string Password { get; set; }
         public string FirstName { get; set; }
