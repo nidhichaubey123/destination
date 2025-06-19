@@ -311,15 +311,20 @@
   },
   {
     "ContainingType": "DMCPortal.API.Controllers.UserController",
-    "Method": "GetUserById",
+    "Method": "UpdateUser",
     "RelativePath": "api/User/{id}",
-    "HttpMethod": "GET",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "user",
+        "Type": "DMCPortal.API.Entities.Helpers.UserUpdateDto",
         "IsRequired": true
       }
     ],

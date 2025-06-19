@@ -4,6 +4,7 @@ using DMCPortal.API.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DMCPortal.API.Controllers
 {
@@ -19,12 +20,11 @@ namespace DMCPortal.API.Controllers
             this.context = context;
             _httpContextAccessor = httpContextAccessor;
         }
+
         [HttpPost("register")]
         [AuthorizeOperation(OperationName = "CanCreateUser")]
         public IActionResult RegisterUser([FromBody] RegisterRequest request)
         {
-
-
             if (string.IsNullOrWhiteSpace(request.EmailAddress) || !Regex.IsMatch(request.EmailAddress, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             {
                 return BadRequest("Invalid email address.");
@@ -33,12 +33,11 @@ namespace DMCPortal.API.Controllers
             if (context.Users.Any(u => u.emailAddress == request.EmailAddress))
             {
                 var problem = new ValidationProblemDetails(new Dictionary<string, string[]>
-    {
-        { "EmailAddress", new[] { "Email already exists." } }
-    });
+                {
+                    { "EmailAddress", new[] { "Email already exists." } }
+                });
                 return BadRequest(problem);
             }
-
 
             if (string.IsNullOrWhiteSpace(request.FirstName))
             {
@@ -57,7 +56,6 @@ namespace DMCPortal.API.Controllers
 
             string hashedPassword = PasswordHelper.HashPassword(request.Password);
 
-
             var newUser = new User
             {
                 emailAddress = request.EmailAddress,
@@ -75,20 +73,13 @@ namespace DMCPortal.API.Controllers
             return Ok(new { userId = newUser.userId });
         }
 
-
-
-
         [HttpPost("login")]
-
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-
-
-            // Fetch user by email
             var user = context.Users.FirstOrDefault(u => u.emailAddress == request.EmailAddress);
             if (user == null)
             {
-                return BadRequest(new { message = "Invalid credentials" });  // Always return JSON
+                return BadRequest(new { message = "Invalid credentials" });
             }
 
             bool isValid = PasswordHelper.VerifyPassword(user.password, request.Password);
@@ -97,10 +88,8 @@ namespace DMCPortal.API.Controllers
                 return Unauthorized(new { message = "Invalid credentials" });
             }
 
-
             user.lastLoggedOn = DateTime.Now;
 
-            // Your session logic (as before)
             var oldSessions = await context.UserSessions
                 .Where(s => s.userId == user.userId && !s.isExpired)
                 .ToListAsync();
@@ -127,9 +116,6 @@ namespace DMCPortal.API.Controllers
             return Ok(new { sessionId = newSession.sessionId });
         }
 
-
-
-
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
@@ -139,6 +125,7 @@ namespace DMCPortal.API.Controllers
                     userId = u.userId,
                     emailAddress = u.emailAddress,
                     firstName = u.firstName,
+                    middleName = u.middleName,
                     lastName = u.lastName,
                     mobileNo = u.mobileNo,
                     lastLoggedOn = u.lastLoggedOn,
@@ -152,28 +139,63 @@ namespace DMCPortal.API.Controllers
         }
 
         [HttpDelete("{id}")]
+       
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await context.Users.FindAsync(id);
             if (user == null) return NotFound();
 
-            // Remove roles first
             var roles = context.UserRoles.Where(ur => ur.UserId == id);
             context.UserRoles.RemoveRange(roles);
 
-            // Then remove user
             context.Users.Remove(user);
 
             await context.SaveChangesAsync();
             return Ok(new { message = "User and roles deleted successfully" });
         }
 
+        [HttpPut("{id}")]
+     
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto user)
+        {
+            if (id != user.UserId)
+                return BadRequest("Mismatched user ID.");
 
+            if (string.IsNullOrWhiteSpace(user.FirstName) ||
+                string.IsNullOrWhiteSpace(user.LastName) ||
+                string.IsNullOrWhiteSpace(user.EmailAddress))
+            {
+                return BadRequest(new { message = "First name, last name, and email are required." });
+            }
 
+            if (!Regex.IsMatch(user.EmailAddress, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                return BadRequest(new { message = "Invalid email format." });
+            }
 
+            if (!string.IsNullOrWhiteSpace(user.MobileNo) && !Regex.IsMatch(user.MobileNo, @"^\d{10}$"))
+            {
+                return BadRequest(new { message = "Mobile number must be exactly 10 digits." });
+            }
 
+            var emailExists = await context.Users.AnyAsync(u => u.emailAddress == user.EmailAddress && u.userId != id);
+            if (emailExists)
+            {
+                return BadRequest(new { message = "Email already exists." });
+            }
+
+            var existing = await context.Users.FindAsync(id);
+            if (existing == null)
+                return NotFound();
+
+            existing.firstName = user.FirstName;
+            existing.middleName = user.MiddleName;
+            existing.lastName = user.LastName;
+            existing.emailAddress = user.EmailAddress;
+            existing.mobileNo = user.MobileNo;
+
+            await context.SaveChangesAsync();
+            return Ok(new { message = "User updated successfully" });
+        }
     }
 }
-
-
-
