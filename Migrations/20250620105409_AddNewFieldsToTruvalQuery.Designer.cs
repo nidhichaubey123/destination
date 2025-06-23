@@ -4,6 +4,7 @@ using DMCPortal.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DMCPortal.API.Migrations
 {
     [DbContext(typeof(DMCPortalDBContext))]
-    partial class DMCPortalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250620105409_AddNewFieldsToTruvalQuery")]
+    partial class AddNewFieldsToTruvalQuery
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,6 +25,109 @@ namespace DMCPortal.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("DMCPortal.API.Entities.DMCPortal.API.Entities.TruvaiQuery", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AgentID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Budget")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConfirmationCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConversionProbability")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CostSheetLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Destination")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EndClient")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FinalPax")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GitFit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HandledBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastReplied")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OriginatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PaxCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QueryCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("QueryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("QuoteUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReminderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReminderOverdue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReservationLead")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Source")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TravelPlans")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WhyLost")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Zone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TruvaiQueries");
+                });
+
             modelBuilder.Entity("DMCPortal.API.Entities.User", b =>
                 {
                     b.Property<int>("userId")
@@ -29,9 +135,6 @@ namespace DMCPortal.API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("userId"));
-
-                    b.Property<bool>("UserIsActive")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("createdOn")
                         .HasColumnType("datetime2");
@@ -175,114 +278,6 @@ namespace DMCPortal.API.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("RoleOperations");
-                });
-
-            modelBuilder.Entity("TruvaiQuery", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AgentID")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Budget")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ConfirmationCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ConversionProbability")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CostSheetLink")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Destination")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EndClient")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FinalPax")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GitFit")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HandledBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastReplied")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OriginatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PaxCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("QueryCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("QueryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("QuoteUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ReminderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReminderOverdue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReservationLead")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Source")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TravelPlans")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WhyLost")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Zone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TruvaiQueries");
                 });
 
             modelBuilder.Entity("UserRole", b =>

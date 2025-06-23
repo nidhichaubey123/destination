@@ -10,7 +10,7 @@
         public string lastName { get; set; }
         public string? mobileNo { get; set; }
         public DateTime? lastLoggedOn { get; set; }
-
+        public bool UserIsActive { get; set; }
 
         public List<string> Roles { get; set; } = new();
     }

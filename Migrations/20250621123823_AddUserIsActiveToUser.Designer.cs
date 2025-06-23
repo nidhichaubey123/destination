@@ -4,6 +4,7 @@ using DMCPortal.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DMCPortal.API.Migrations
 {
     [DbContext(typeof(DMCPortalDBContext))]
-    partial class DMCPortalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250621123823_AddUserIsActiveToUser")]
+    partial class AddUserIsActiveToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +32,9 @@ namespace DMCPortal.API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("userId"));
+
+                    b.Property<bool>("OperationIsActive")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("UserIsActive")
                         .HasColumnType("bit");

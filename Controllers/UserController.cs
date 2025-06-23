@@ -23,14 +23,14 @@ namespace DMCPortal.API.Controllers
 
         [HttpPost("register")]
         [AuthorizeOperation(OperationName = "CanCreateUser")]
-        public IActionResult RegisterUser([FromBody] RegisterRequest request)
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.EmailAddress) || !Regex.IsMatch(request.EmailAddress, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             {
                 return BadRequest("Invalid email address.");
             }
 
-            if (context.Users.Any(u => u.emailAddress == request.EmailAddress))
+            if (await context.Users.AnyAsync(u => u.emailAddress == request.EmailAddress))
             {
                 var problem = new ValidationProblemDetails(new Dictionary<string, string[]>
                 {
@@ -64,31 +64,62 @@ namespace DMCPortal.API.Controllers
                 middleName = request.MiddleName,
                 lastName = request.LastName,
                 mobileNo = request.MobileNo,
-                createdOn = DateTime.Now
+
+                createdOn = DateTime.Now,
+                UserIsActive = false
             };
 
             context.Users.Add(newUser);
-            context.SaveChangesAsync();
 
-            return Ok(new { userId = newUser.userId });
+            try
+            {
+                await context.SaveChangesAsync();
+
+                var response = new UserRegisterResponse
+                {
+                    UserId = newUser.userId
+                };
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new ErrorResponse
+                {
+                    Message = "Failed to save user to database",
+                    Error = ex.Message
+                };
+                return StatusCode(500, errorResponse);
+            }
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var user = context.Users.FirstOrDefault(u => u.emailAddress == request.EmailAddress);
-            if (user == null)
+            var user = await context.Users
+                .FirstOrDefaultAsync(u => u.emailAddress == request.EmailAddress);
+
+            if (user == null || !PasswordHelper.VerifyPassword(user.password, request.Password))
             {
-                return BadRequest(new { message = "Invalid credentials" });
+                var unauthorizedResponse = new ErrorResponse { Message = "Invalid credentials" };
+                return Unauthorized(unauthorizedResponse);
             }
 
-            bool isValid = PasswordHelper.VerifyPassword(user.password, request.Password);
-            if (!isValid)
+
+            // ⛔ Check if user is blocked
+            if (!user.UserIsActive)
             {
-                return Unauthorized(new { message = "Invalid credentials" });
+                var blockedResponse = new ErrorResponse
+                {
+                    Message = "YOUR ACCOUNT IS BLOCKED. PLEASE CONTACT ADMIN"
+                };
+                return Unauthorized(blockedResponse);
             }
 
+            // ✅ Activate user after successful login
             user.lastLoggedOn = DateTime.Now;
+            user.UserIsActive = true;
+
+
 
             var oldSessions = await context.UserSessions
                 .Where(s => s.userId == user.userId && !s.isExpired)
@@ -113,7 +144,24 @@ namespace DMCPortal.API.Controllers
             context.UserSessions.Add(newSession);
             await context.SaveChangesAsync();
 
-            return Ok(new { sessionId = newSession.sessionId });
+            var operations = await (
+                from ur in context.UserRoles
+                join ro in context.RoleOperations on ur.RoleId equals ro.RoleId
+                join op in context.Operations on ro.OperationId equals op.OperationId
+                where ur.UserId == user.userId
+                   && ur.IsActive
+                   && ro.IsActive
+                   && op.OperationIsActive
+                select op.OperationName
+            ).Distinct().ToListAsync();
+
+            var loginResponse = new LoginResponse
+            {
+                SessionId = newSession.sessionId,
+                Operations = operations ?? new List<string>()
+            };
+
+            return Ok(loginResponse);
         }
 
         [HttpGet]
@@ -129,6 +177,8 @@ namespace DMCPortal.API.Controllers
                     lastName = u.lastName,
                     mobileNo = u.mobileNo,
                     lastLoggedOn = u.lastLoggedOn,
+                    UserIsActive = u.UserIsActive,
+
                     Roles = context.UserRoles
                                 .Where(ur => ur.UserId == u.userId)
                                 .Select(ur => ur.Role.RoleName)
@@ -139,7 +189,6 @@ namespace DMCPortal.API.Controllers
         }
 
         [HttpDelete("{id}")]
-       
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await context.Users.FindAsync(id);
@@ -147,41 +196,47 @@ namespace DMCPortal.API.Controllers
 
             var roles = context.UserRoles.Where(ur => ur.UserId == id);
             context.UserRoles.RemoveRange(roles);
-
             context.Users.Remove(user);
-
             await context.SaveChangesAsync();
-            return Ok(new { message = "User and roles deleted successfully" });
+
+            var response = new DeleteUserResponse { Message = "User and roles deleted successfully" };
+            return Ok(response);
         }
 
         [HttpPut("{id}")]
-     
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto user)
         {
             if (id != user.UserId)
-                return BadRequest("Mismatched user ID.");
+            {
+                var mismatchResponse = new ErrorResponse { Message = "Mismatched user ID." };
+                return BadRequest(mismatchResponse);
+            }
 
             if (string.IsNullOrWhiteSpace(user.FirstName) ||
                 string.IsNullOrWhiteSpace(user.LastName) ||
                 string.IsNullOrWhiteSpace(user.EmailAddress))
             {
-                return BadRequest(new { message = "First name, last name, and email are required." });
+                var requiredFieldsResponse = new ErrorResponse { Message = "First name, last name, and email are required." };
+                return BadRequest(requiredFieldsResponse);
             }
 
             if (!Regex.IsMatch(user.EmailAddress, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             {
-                return BadRequest(new { message = "Invalid email format." });
+                var invalidEmailResponse = new ErrorResponse { Message = "Invalid email format." };
+                return BadRequest(invalidEmailResponse);
             }
 
             if (!string.IsNullOrWhiteSpace(user.MobileNo) && !Regex.IsMatch(user.MobileNo, @"^\d{10}$"))
             {
-                return BadRequest(new { message = "Mobile number must be exactly 10 digits." });
+                var invalidMobileResponse = new ErrorResponse { Message = "Mobile number must be exactly 10 digits." };
+                return BadRequest(invalidMobileResponse);
             }
 
             var emailExists = await context.Users.AnyAsync(u => u.emailAddress == user.EmailAddress && u.userId != id);
             if (emailExists)
             {
-                return BadRequest(new { message = "Email already exists." });
+                var emailExistsResponse = new ErrorResponse { Message = "Email already exists." };
+                return BadRequest(emailExistsResponse);
             }
 
             var existing = await context.Users.FindAsync(id);
@@ -195,7 +250,57 @@ namespace DMCPortal.API.Controllers
             existing.mobileNo = user.MobileNo;
 
             await context.SaveChangesAsync();
-            return Ok(new { message = "User updated successfully" });
+
+            var updateResponse = new UpdateUserResponse { Message = "User updated successfully" };
+            return Ok(updateResponse);
         }
+
+
+        [HttpPut("ChangeStatus/{id}")]
+        public IActionResult ChangeStatus(int id, [FromBody] UserStatusUpdateDto statusUpdate)
+        {
+            var user = context.Users.FirstOrDefault(u => u.userId == id);
+            if (user == null)
+                return NotFound();
+
+            user.UserIsActive = statusUpdate.UserIsActive;
+            context.SaveChanges();
+
+            return Ok(new { message = "Status updated successfully." });
+        }
+
     }
+
+    // Response Classes
+    public class UserRegisterResponse
+    {
+        public int UserId { get; set; }
+    }
+
+    public class LoginResponse
+    {
+        public Guid SessionId { get; set; }
+        public List<string> Operations { get; set; } = new List<string>();
+    }
+
+    public class DeleteUserResponse
+    {
+        public string Message { get; set; }
+    }
+
+    public class UpdateUserResponse
+    {
+        public string Message { get; set; }
+    }
+
+    public class ErrorResponse
+    {
+        public string Message { get; set; }
+        public string Error { get; set; }
+    }
+
+
+   
+
+
 }

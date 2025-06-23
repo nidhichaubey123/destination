@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 
 namespace DMCPortal.API.Entities
 {
@@ -16,5 +17,6 @@ namespace DMCPortal.API.Entities
         public DbSet<RoleOperation> RoleOperations { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
 
+        public DbSet<TruvaiQuery> TruvaiQueries { get; set; }
     }
 }
