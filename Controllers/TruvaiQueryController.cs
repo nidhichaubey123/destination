@@ -16,14 +16,42 @@ namespace DMCPortal.API.Controllers
             _context = context;
         }
 
-        // GET: api/leads
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TruvaiQuery>>> GetAll()
+        public async Task<IActionResult> GetLeads([FromQuery] string? search = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                var data = await _context.TruvaiQueries.ToListAsync();
-                return Ok(data);
+                var query = _context.TruvaiQueries.AsQueryable();
+
+                // Server-side Search
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    query = query.Where(q =>
+                        q.Name.Contains(search) ||
+                        q.Email.Contains(search) ||
+                        q.Phone.Contains(search) ||
+                        q.Destination.Contains(search) ||
+                        q.Zone.Contains(search)
+                    );
+                }
+
+                // Total Count for Pagination
+                var totalRecords = await query.CountAsync();
+
+                // Sorting by Name Ascending
+                query = query.OrderBy(q => q.Name);
+
+                // Pagination
+                var leads = await query
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    TotalRecords = totalRecords,
+                    Leads = leads
+                });
             }
             catch (Exception ex)
             {
@@ -31,14 +59,18 @@ namespace DMCPortal.API.Controllers
             }
         }
 
-        // GET: api/leads/5
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<TruvaiQuery>> GetById(int id)
+        public IActionResult GetById(int id)
         {
-            var query = await _context.TruvaiQueries.FindAsync(id);
-            if (query == null) return NotFound();
-            return query;
+            var lead = _context.TruvaiQueries.FirstOrDefault(l => l.Id == id);
+
+            if (lead == null)
+                return NotFound();
+
+            return Ok(lead);
         }
+
 
         // POST: api/leads
         // Note: No custom route name, so this responds to POST /api/leads
@@ -67,16 +99,70 @@ namespace DMCPortal.API.Controllers
             return NoContent();
         }
 
-        // DELETE: api/leads/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var query = await _context.TruvaiQueries.FindAsync(id);
-            if (query == null) return NotFound();
 
-            _context.TruvaiQueries.Remove(query);
-            await _context.SaveChangesAsync();
-            return NoContent();
+        [HttpDelete("{id}")]
+        public IActionResult DeleteLead(int id)
+        {
+            var lead = _context.TruvaiQueries.FirstOrDefault(l => l.Id == id);
+            if (lead == null)
+            {
+                return NotFound();
+            }
+
+            _context.TruvaiQueries.Remove(lead);
+            _context.SaveChanges();
+
+            return Ok();
         }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateLead([FromBody] TruvaiQuery query)
+        {
+            if (query == null || query.Id <= 0)
+                return BadRequest("Invalid data");
+
+            var existing = await _context.TruvaiQueries.FindAsync(query.Id);
+            if (existing == null)
+                return NotFound("Lead not found");
+
+            // Only update fields that were provided - avoid overwriting existing values with defaults
+            existing.Name = query.Name ?? existing.Name;
+            existing.Email = query.Email ?? existing.Email;
+            existing.Phone = query.Phone ?? existing.Phone;
+            existing.Zone = query.Zone ?? existing.Zone;
+            existing.GitFit = query.GitFit ?? existing.GitFit;
+            existing.Destination = query.Destination ?? existing.Destination;
+            existing.PaxCount = query.PaxCount > 0 ? query.PaxCount : existing.PaxCount;
+            existing.Budget = query.Budget > 0 ? query.Budget : existing.Budget;
+            existing.Status = query.Status ?? existing.Status;
+            existing.Source = query.Source ?? existing.Source;
+            existing.QueryCode = query.QueryCode ?? existing.QueryCode;
+            existing.Notes = query.Notes ?? existing.Notes;
+
+            // Optional fields - only overwrite if valid
+            if (query.QueryDate != DateTime.MinValue && query.QueryDate != default)
+                existing.QueryDate = query.QueryDate;
+
+            if (query.StartDate.HasValue)
+                existing.StartDate = query.StartDate;
+
+            if (query.EndDate.HasValue)
+                existing.EndDate = query.EndDate;
+
+            if (query.ConversionProbability.HasValue)
+                existing.ConversionProbability = query.ConversionProbability;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error updating lead: " + ex.Message);
+            }
+        }
+
+
     }
 }

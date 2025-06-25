@@ -17,7 +17,7 @@ namespace DMCPortal.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Operation>> GetOperations()
         {
-            return Ok(_context.Operations.ToList());
+            return Ok(_context.Operations.OrderBy(u=>u.OperationName).ToList());
         }
 
         [HttpGet("{id}")]

@@ -1,23 +1,29 @@
 [
   {
     "ContainingType": "DMCPortal.API.Controllers.LeadsController",
-    "Method": "GetAll",
+    "Method": "GetLeads",
     "RelativePath": "api/Leads",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
+    "Parameters": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[TruvaiQuery, DMCPortal.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
       }
-    ]
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "DMCPortal.API.Controllers.LeadsController",
@@ -59,17 +65,7 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "TruvaiQuery",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "DMCPortal.API.Controllers.LeadsController",
@@ -94,7 +90,7 @@
   },
   {
     "ContainingType": "DMCPortal.API.Controllers.LeadsController",
-    "Method": "Delete",
+    "Method": "DeleteLead",
     "RelativePath": "api/Leads/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
@@ -103,6 +99,22 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.LeadsController",
+    "Method": "UpdateLead",
+    "RelativePath": "api/Leads/update",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "query",
+        "Type": "TruvaiQuery",
         "IsRequired": true
       }
     ],
@@ -455,6 +467,22 @@
       {
         "Name": "statusUpdate",
         "Type": "DMCPortal.API.Entities.Helpers.UserStatusUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.UserController",
+    "Method": "DeleteSession",
+    "RelativePath": "api/User/DeleteSession/{sessionId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "sessionId",
+        "Type": "System.Guid",
         "IsRequired": true
       }
     ],

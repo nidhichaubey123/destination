@@ -20,4 +20,12 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\Entities\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="D:\Work Folder\Truvai\DMC\truvaidmcportal-api\DMCPortal.API\Entities\.editorconfig" />
+  </ItemGroup>
+
 </Project>

@@ -17,7 +17,7 @@ namespace DMCPortal.API.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            var roles = _context.Roles.ToList();
+            var roles = _context.Roles.OrderBy(u=>u.RoleName).ToList();
             return Ok(roles);
         }
 

@@ -158,35 +158,43 @@ namespace DMCPortal.API.Controllers
             var loginResponse = new LoginResponse
             {
                 SessionId = newSession.sessionId,
-                Operations = operations ?? new List<string>()
+                Operations = operations ?? new List<string>(),
+                    FirstName = user.firstName,
+                LastName = user.lastName
+
             };
 
+          
             return Ok(loginResponse);
         }
 
         [HttpGet]
+  
         public async Task<IActionResult> GetUsers()
         {
             var users = await context.Users
-                .Select(u => new UserDto
-                {
-                    userId = u.userId,
-                    emailAddress = u.emailAddress,
-                    firstName = u.firstName,
-                    middleName = u.middleName,
-                    lastName = u.lastName,
-                    mobileNo = u.mobileNo,
-                    lastLoggedOn = u.lastLoggedOn,
-                    UserIsActive = u.UserIsActive,
+                    .OrderBy(u => u.firstName)
+                    .ThenBy(u => u.lastName)
+                    .Select(u => new UserDto
+                    {
+                        userId = u.userId,
+                        emailAddress = u.emailAddress,
+                        firstName = u.firstName,
+                        middleName = u.middleName,
+                        lastName = u.lastName,
+                        mobileNo = u.mobileNo,
+                        lastLoggedOn = u.lastLoggedOn,
+                        UserIsActive = u.UserIsActive,
 
-                    Roles = context.UserRoles
+                        Roles = context.UserRoles
                                 .Where(ur => ur.UserId == u.userId)
                                 .Select(ur => ur.Role.RoleName)
                                 .ToList()
-                }).ToListAsync();
+                    }).ToListAsync();
 
             return Ok(users);
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
@@ -269,6 +277,20 @@ namespace DMCPortal.API.Controllers
             return Ok(new { message = "Status updated successfully." });
         }
 
+
+        [HttpDelete("DeleteSession/{sessionId}")]
+        public IActionResult DeleteSession(Guid sessionId)
+        {
+            var session = context.UserSessions.FirstOrDefault(s => s.sessionId == sessionId);
+            if (session != null)
+            {
+                context.UserSessions.Remove(session);
+                context.SaveChanges();
+            }
+            return Ok();
+        }
+
+
     }
 
     // Response Classes
@@ -277,11 +299,7 @@ namespace DMCPortal.API.Controllers
         public int UserId { get; set; }
     }
 
-    public class LoginResponse
-    {
-        public Guid SessionId { get; set; }
-        public List<string> Operations { get; set; } = new List<string>();
-    }
+   
 
     public class DeleteUserResponse
     {
