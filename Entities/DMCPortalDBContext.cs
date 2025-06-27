@@ -18,5 +18,10 @@ namespace DMCPortal.API.Entities
         public DbSet<UserRole> UserRoles { get; set; }
 
         public DbSet<TruvaiQuery> TruvaiQueries { get; set; }
+
+        public DbSet<Agent> Agents { get; set; }
+        public DbSet<DiscussionType> DiscussionTypes { get; set; }
+        public DbSet<MeetingType> MeetingTypes { get; set; }
+        public DbSet<SalesVisit> SalesVisits { get; set; }
     }
 }
