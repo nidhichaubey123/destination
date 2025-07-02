@@ -30,11 +30,14 @@ namespace DMCPortal.API.Controllers
             return visit;
 
         }
-
         [HttpPost]
         public async Task<ActionResult<SalesVisit>> PostSalesVisit([FromBody] SalesVisit visit)
         {
-            visit.CreatedOn = DateTime.Now; // Ensure CreatedOn is set
+            // Remove claim check
+            if (visit.CreatedBy <= 0)
+                return BadRequest("CreatedBy is required.");
+
+            visit.CreatedOn = DateTime.Now;
 
             _context.SalesVisits.Add(visit);
             await _context.SaveChangesAsync();
@@ -44,15 +47,28 @@ namespace DMCPortal.API.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSalesVisit(int id, SalesVisit visit)
+       public async Task<IActionResult> PutSalesVisit(int id, SalesVisit visit)
         {
-            if (id != visit.SalesVisitId)
-                return BadRequest();
+              if (id != visit.SalesVisitId)
+         return BadRequest();
 
-            _context.Entry(visit).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
+        var existing = await _context.SalesVisits.FindAsync(id);
+        if (existing == null)
+        return NotFound();
+
+       // Preserve CreatedBy and CreatedOn
+       visit.CreatedBy = existing.CreatedBy;
+      visit.CreatedOn = existing.CreatedOn;
+
+      // Set UpdatedBy and UpdatedOn
+       visit.UpdatedBy = visit.UpdatedBy;  // Set from client-side or API (recommend setting in API)
+      visit.UpdatedOn = DateTime.Now;
+
+          _context.Entry(existing).CurrentValues.SetValues(visit);
+         await _context.SaveChangesAsync();
+
+          return NoContent();
+            }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSalesVisit(int id)
@@ -65,6 +81,27 @@ namespace DMCPortal.API.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+        [HttpGet("UserWise/{userId}")]
+        public async Task<ActionResult<IEnumerable<SalesVisit>>> GetSalesByUser(int userId)
+        {
+            try
+            {
+                Console.WriteLine("UserWise API Called. UserId: " + userId);
+
+                var sales = await _context.SalesVisits
+                                          .Where(s => s.CreatedBy == userId)
+                                          .OrderByDescending(s => s.VisitDate)
+                                          .ToListAsync();
+
+                return Ok(sales);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR in GetSalesByUser: " + ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 
 
     }

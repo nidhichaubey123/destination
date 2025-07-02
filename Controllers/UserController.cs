@@ -160,8 +160,8 @@ namespace DMCPortal.API.Controllers
                 SessionId = newSession.sessionId,
                 Operations = operations ?? new List<string>(),
                     FirstName = user.firstName,
-                LastName = user.lastName
-
+                LastName = user.lastName,
+                    UserId = user.userId
             };
 
           
@@ -282,11 +282,14 @@ namespace DMCPortal.API.Controllers
         public IActionResult DeleteSession(Guid sessionId)
         {
             var session = context.UserSessions.FirstOrDefault(s => s.sessionId == sessionId);
-            if (session != null)
+
+            if (session != null && !session.isExpired)
             {
-                context.UserSessions.Remove(session);
+                session.isExpired = true;
+                session.expiredOn = DateTime.Now;
                 context.SaveChanges();
             }
+
             return Ok();
         }
 

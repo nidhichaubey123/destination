@@ -11,6 +11,8 @@ namespace DMCPortal.API.Entities
         [ForeignKey("Users")]
         public int UserId { get; set; } 
 
+
+
         [Required]
         public DateTime VisitDate { get; set; }
 
@@ -39,7 +41,12 @@ namespace DMCPortal.API.Entities
         public DateTime CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
 
-   
+
+        public int? CreatedBy { get; set; }
+        public int? UpdatedBy { get; set; } 
+        public DateTime? DeletedOn { get; set; }
+        public int? DeletedBy { get; set; }
+
     }
 
 }
