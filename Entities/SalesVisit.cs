@@ -33,6 +33,9 @@ namespace DMCPortal.API.Entities
         public decimal? MeetingLatitude { get; set; }
         public decimal? MeetingLongitude { get; set; }
 
+
+        public decimal? EntryLatitude { get; set; }
+        public decimal? EntryLongitude { get; set; }
         public string MeetingNotes { get; set; }
 
         [MaxLength(100)]

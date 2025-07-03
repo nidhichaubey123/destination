@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DMCPortal.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fae5ea84b7e39fe8ae2622619e29b8063da69fb2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+918e3a313569f34a87bb490069b852e079f1fac1")]
 [assembly: System.Reflection.AssemblyProductAttribute("DMCPortal.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DMCPortal.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
