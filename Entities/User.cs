@@ -23,7 +23,7 @@ namespace DMCPortal.API.Entities
 
         public DateTime? lastLoggedOn { get; set; }
 
- 
+
 
         public bool UserIsActive { get; set; } = false;
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();

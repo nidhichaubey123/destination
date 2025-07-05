@@ -10,25 +10,30 @@ namespace DMCPortal.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services
+            // Add services to the container
             builder.Services.AddControllers();
 
             var provider = builder.Services.BuildServiceProvider();
             var config = provider.GetRequiredService<IConfiguration>();
-            builder.Services.AddDbContext<DMCPortalDBContext>(item => item.UseSqlServer(config.GetConnectionString("dbcs")));
 
-            // CORS: Allow frontend origin (adjust port as per your frontend project)
+            builder.Services.AddDbContext<DMCPortalDBContext>(options =>
+                options.UseSqlServer(config.GetConnectionString("dbcs")));
+
             builder.Services.AddCors(options =>
             {
                 options.AddDefaultPolicy(policy =>
                 {
-                    policy.WithOrigins("https://localhost:7202", "https://localhost:5024", "http://localhost:5024")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
+                    policy.SetIsOriginAllowed(origin =>
+                        new Uri(origin).Host == "localhost") // Allow any localhost port
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
                 });
             });
 
+
             builder.Services.AddDistributedMemoryCache();
+
             builder.Services.AddSession(options =>
             {
                 options.Cookie.HttpOnly = true;
@@ -46,10 +51,11 @@ namespace DMCPortal.API
 
             var app = builder.Build();
 
+            // Configure the HTTP request pipeline
             app.UseHttpsRedirection();
             app.UseRouting();
 
-            app.UseCors();  // <-- default CORS used here
+            app.UseCors();  // Enable CORS before authentication
 
             app.UseSession();
             app.UseAuthentication();

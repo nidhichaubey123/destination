@@ -4,6 +4,7 @@ using DMCPortal.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DMCPortal.API.Migrations
 {
     [DbContext(typeof(DMCPortalDBContext))]
-    partial class DMCPortalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250704055014_updaterolefield")]
+    partial class updaterolefield
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -272,36 +275,6 @@ namespace DMCPortal.API.Migrations
                     b.ToTable("UserSessions");
                 });
 
-            modelBuilder.Entity("DMCPortal.API.Entities.Zone", b =>
-                {
-                    b.Property<int>("ZoneId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ZoneId"));
-
-                    b.Property<string>("ZoneCreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ZoneCreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ZoneName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ZoneUpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ZoneUpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ZoneId");
-
-                    b.ToTable("Zones");
-                });
-
             modelBuilder.Entity("Operation", b =>
                 {
                     b.Property<int>("OperationId")
@@ -310,8 +283,8 @@ namespace DMCPortal.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OperationId"));
 
-                    b.Property<int?>("OperationCreatedBy")
-                        .HasColumnType("int");
+                    b.Property<string>("OperationCreatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("OperationCreatedOn")
                         .HasColumnType("datetime2");
@@ -326,8 +299,8 @@ namespace DMCPortal.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OperationUpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<string>("OperationUpdatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("OperationUpdatedOn")
                         .HasColumnType("datetime2");
@@ -345,8 +318,8 @@ namespace DMCPortal.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
 
-                    b.Property<int?>("RoleCreatedBy")
-                        .HasColumnType("int");
+                    b.Property<string>("RoleCreatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RoleCreatedOn")
                         .HasColumnType("datetime2");
@@ -358,8 +331,8 @@ namespace DMCPortal.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("RoleUpdatedBy")
-                        .HasColumnType("int");
+                    b.Property<string>("RoleUpdatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("RoleUpdatedOn")
                         .HasColumnType("datetime2");

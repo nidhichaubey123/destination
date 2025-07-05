@@ -23,5 +23,7 @@ namespace DMCPortal.API.Entities
         public DbSet<DiscussionType> DiscussionTypes { get; set; }
         public DbSet<MeetingType> MeetingTypes { get; set; }
         public DbSet<SalesVisit> SalesVisits { get; set; }
+        public DbSet<Zone> Zones { get; set; }
+
     }
 }

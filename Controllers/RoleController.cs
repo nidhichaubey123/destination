@@ -39,6 +39,8 @@ namespace DMCPortal.API.Controllers
             }
 
             role.RoleCreatedOn = DateTime.Now;
+            role.RoleCreatedBy = GetLoggedInUserId();
+
             _context.Roles.Add(role);
             _context.SaveChanges();
             return Ok(role);
@@ -58,7 +60,11 @@ namespace DMCPortal.API.Controllers
 
             existing.RoleName = role.RoleName;
             existing.RoleDescription = role.RoleDescription;
-            existing.RoleCreatedOn = DateTime.Now;
+            existing.RoleCreatedOn = DateTime.Now; existing.RoleName = role.RoleName;
+       
+            existing.RoleUpdatedOn = DateTime.Now;
+            existing.RoleUpdatedBy = GetLoggedInUserId();
+
 
             _context.SaveChanges();
             return Ok(existing);
@@ -109,6 +115,15 @@ namespace DMCPortal.API.Controllers
             _context.SaveChanges();
             return Ok("Operations assigned.");
         }
+        private int GetLoggedInUserId()
+        {
+            if (Request.Headers.TryGetValue("UserId", out var userIdHeader))
+            {
+                return int.TryParse(userIdHeader, out int userId) ? userId : 0;
+            }
+            return 0;
+        }
+
     }
 
     public class RoleOperationRequest
@@ -116,5 +131,7 @@ namespace DMCPortal.API.Controllers
         public int RoleId { get; set; }
         public List<int> OperationIds { get; set; }
     }
+
+
 }
 

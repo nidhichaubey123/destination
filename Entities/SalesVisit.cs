@@ -9,8 +9,7 @@ namespace DMCPortal.API.Entities
 
         [Required]
         [ForeignKey("Users")]
-        public int UserId { get; set; } 
-
+        public int UserId { get; set; }
 
 
         [Required]
@@ -34,6 +33,12 @@ namespace DMCPortal.API.Entities
         public decimal? MeetingLongitude { get; set; }
 
 
+        public User? User { get; set; }
+        public Agent? Agent { get; set; }
+        public MeetingType? MeetingType { get; set; }
+        public DiscussionType? DiscussionType { get; set; }
+
+
         public decimal? EntryLatitude { get; set; }
         public decimal? EntryLongitude { get; set; }
         public string MeetingNotes { get; set; }
@@ -49,6 +54,11 @@ namespace DMCPortal.API.Entities
         public int? UpdatedBy { get; set; } 
         public DateTime? DeletedOn { get; set; }
         public int? DeletedBy { get; set; }
+
+
+
+
+
 
     }
 

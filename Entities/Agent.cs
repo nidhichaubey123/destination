@@ -10,6 +10,8 @@ namespace DMCPortal.API.Entities
         [MaxLength(255)]
         public string AgentName { get; set; }
 
+
+
         // Navigation
         public ICollection<SalesVisit> SalesVisits { get; set; }
     }

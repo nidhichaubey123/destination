@@ -592,7 +592,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[DMCPortal.API.Entities.SalesVisit, DMCPortal.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DMCPortal.API.Entities.Helpers.SalesVisitViewModel, DMCPortal.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -693,6 +693,47 @@
   },
   {
     "ContainingType": "DMCPortal.API.Controllers.SalesVisitController",
+    "Method": "GetPaged",
+    "RelativePath": "api/SalesVisit/Paged",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "userId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DMCPortal.API.Controllers.PagedResult\u00601[[DMCPortal.API.Entities.Helpers.SalesVisitViewModel, DMCPortal.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.SalesVisitController",
     "Method": "GetSalesByUser",
     "RelativePath": "api/SalesVisit/UserWise/{userId}",
     "HttpMethod": "GET",
@@ -707,7 +748,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[DMCPortal.API.Entities.SalesVisit, DMCPortal.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[DMCPortal.API.Entities.Helpers.SalesVisitViewModel, DMCPortal.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -910,6 +951,85 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.ZoneController",
+    "Method": "GetZones",
+    "RelativePath": "api/Zone",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.ZoneController",
+    "Method": "CreateZone",
+    "RelativePath": "api/Zone",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "zone",
+        "Type": "DMCPortal.API.Entities.Zone",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.ZoneController",
+    "Method": "GetZone",
+    "RelativePath": "api/Zone/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.ZoneController",
+    "Method": "Put",
+    "RelativePath": "api/Zone/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updated",
+        "Type": "DMCPortal.API.Controllers.ZoneController\u002BZoneUpdateModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.ZoneController",
+    "Method": "DeleteZone",
+    "RelativePath": "api/Zone/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   }
 ]

@@ -11,4 +11,9 @@ public class Role
     public string? RoleDescription { get; set; }
 
     public DateTime RoleCreatedOn { get; set; }
+    public int? RoleCreatedBy { get; set; }
+
+    public DateTime? RoleUpdatedOn { get; set; }
+    public int? RoleUpdatedBy { get; set; }
+
 }

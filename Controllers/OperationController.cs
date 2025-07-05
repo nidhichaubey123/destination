@@ -35,6 +35,7 @@ namespace DMCPortal.API.Controllers
                 return BadRequest("Operation Name already exists.");
 
             operation.OperationCreatedOn = DateTime.Now;
+            operation.OperationCreatedBy = GetLoggedInUserId();
             _context.Operations.Add(operation);
             _context.SaveChanges();
             return Ok();
@@ -52,7 +53,10 @@ namespace DMCPortal.API.Controllers
             existing.OperationName = operation.OperationName;
             existing.OperationDescription = operation.OperationDescription;
             existing.OperationIsActive = operation.OperationIsActive;
-            existing.OperationCreatedOn = DateTime.Now;
+            existing.OperationUpdatedOn = DateTime.Now;
+
+            existing.OperationUpdatedBy = GetLoggedInUserId();
+
 
             _context.SaveChanges();
             return Ok();
@@ -126,5 +130,12 @@ public IActionResult GetAllOperations()
 
             return Ok(operationIds);
         }
+
+        private int GetLoggedInUserId()
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+            return int.TryParse(userIdClaim, out int userId) ? userId : 0;
+        }
+
     }
 }
