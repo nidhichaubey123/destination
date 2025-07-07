@@ -159,10 +159,12 @@ public async Task<ActionResult<IEnumerable<SalesVisitViewModel>>> GetSalesVisits
 
         [HttpGet("Paged")]
         public async Task<ActionResult<PagedResult<SalesVisitViewModel>>> GetPaged(
-      int page = 1, int pageSize = 10, string search = "", int? userId = null)
+       int page = 1, int pageSize = 10, string search = "", int? userId = null)
         {
             try
             {
+                search = search?.ToLower() ?? "";
+
                 var baseQuery = from s in _context.SalesVisits
                                 join u in _context.Users on s.CreatedBy equals u.userId
                                 join m in _context.MeetingTypes on s.MeetingTypeId equals m.MeetingTypeId into mt
@@ -171,7 +173,14 @@ public async Task<ActionResult<IEnumerable<SalesVisitViewModel>>> GetSalesVisits
                                 from d in dt.DefaultIfEmpty()
                                 join a in _context.Agents on s.AgentId equals a.AgentId into at
                                 from a in at.DefaultIfEmpty()
-                                where (string.IsNullOrEmpty(search) || s.MeetingVenueName.Contains(search) || s.MeetingNotes.Contains(search) || s.SalesVisitCode.Contains(search))
+                                where string.IsNullOrEmpty(search)
+                                      || s.MeetingVenueName.ToLower().Contains(search)
+                                      || s.MeetingNotes.ToLower().Contains(search)
+                                      || s.SalesVisitCode.ToLower().Contains(search)
+                                      || (m != null && m.MeetingTypeName.ToLower().Contains(search))
+                                      || (d != null && d.DiscussionTypeName.ToLower().Contains(search))
+                                      || (a != null && a.AgentName.ToLower().Contains(search))
+                                      || (u.firstName + " " + u.lastName).ToLower().Contains(search)
                                 select new
                                 {
                                     s.SalesVisitId,
@@ -191,7 +200,6 @@ public async Task<ActionResult<IEnumerable<SalesVisitViewModel>>> GetSalesVisits
                                     s.CreatedBy
                                 };
 
-                // Secure filtering
                 if (userId.HasValue)
                     baseQuery = baseQuery.Where(s => s.CreatedBy == userId.Value);
 
