@@ -4,6 +4,7 @@ using DMCPortal.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DMCPortal.API.Migrations
 {
     [DbContext(typeof(DMCPortalDBContext))]
-    partial class DMCPortalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250707055602_addisdeletedfield")]
+    partial class addisdeletedfield
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,33 +33,10 @@ namespace DMCPortal.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AgentId"));
 
-                    b.Property<string>("Agency_Company")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AgentAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("AgentName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AgentPoc1")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Zone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("emailAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("phoneno")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("AgentId");
 
@@ -447,9 +427,6 @@ namespace DMCPortal.API.Migrations
                     b.Property<string>("CostSheetLink")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
@@ -476,7 +453,7 @@ namespace DMCPortal.API.Migrations
                     b.Property<string>("HandledBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastReplied")
@@ -576,7 +553,7 @@ namespace DMCPortal.API.Migrations
             modelBuilder.Entity("DMCPortal.API.Entities.SalesVisit", b =>
                 {
                     b.HasOne("DMCPortal.API.Entities.Agent", "Agent")
-                        .WithMany()
+                        .WithMany("SalesVisits")
                         .HasForeignKey("AgentId");
 
                     b.HasOne("DMCPortal.API.Entities.DiscussionType", "DiscussionType")
@@ -638,6 +615,11 @@ namespace DMCPortal.API.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DMCPortal.API.Entities.Agent", b =>
+                {
+                    b.Navigation("SalesVisits");
                 });
 
             modelBuilder.Entity("DMCPortal.API.Entities.User", b =>

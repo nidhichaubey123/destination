@@ -1,7 +1,7 @@
 [
   {
-    "ContainingType": "AgentController",
-    "Method": "GetAgents",
+    "ContainingType": "DMCPortal.API.Controllers.AgentController",
+    "Method": "GetAll",
     "RelativePath": "api/Agent",
     "HttpMethod": "GET",
     "IsController": true,
@@ -18,6 +18,85 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.AgentController",
+    "Method": "Create",
+    "RelativePath": "api/Agent",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "agent",
+        "Type": "DMCPortal.API.Entities.Agent",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.AgentController",
+    "Method": "GetById",
+    "RelativePath": "api/Agent/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DMCPortal.API.Entities.Agent",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.AgentController",
+    "Method": "Update",
+    "RelativePath": "api/Agent/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "agent",
+        "Type": "DMCPortal.API.Entities.Agent",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.AgentController",
+    "Method": "Delete",
+    "RelativePath": "api/Agent/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "DMCPortal.API.Controllers.DiscussionTypeController",
@@ -199,6 +278,11 @@
         "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
+      },
+      {
+        "Name": "deletedBy",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

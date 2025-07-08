@@ -4,16 +4,24 @@ namespace DMCPortal.API.Entities
 {
     public class Agent
     {
+        [Key]
         public int AgentId { get; set; }
 
         [Required]
-        [MaxLength(255)]
+    
         public string AgentName { get; set; }
 
+        public string AgentPoc1 { get; set; }
+        public string Agency_Company { get; set; }
 
 
-        // Navigation
-        public ICollection<SalesVisit> SalesVisits { get; set; }
+        public string phoneno { get; set; }
+        [Required]
+        public string emailAddress { get; set; }
+        public string Zone { get; set; }
+
+        public string AgentAddress { get; set; }
+
     }
 
 }

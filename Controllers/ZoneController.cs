@@ -32,6 +32,11 @@ namespace DMCPortal.API.Controllers
         {
             try
             {
+                if (_context.Zones.Any(z => z.ZoneName.ToLower() == zone.ZoneName.ToLower()))
+                {
+                    return Conflict(new { message = "Zone name already exists." });
+                }
+
                 zone.ZoneCreatedOn = DateTime.Now;
                 _context.Zones.Add(zone);
                 _context.SaveChanges();
@@ -43,7 +48,6 @@ namespace DMCPortal.API.Controllers
             }
         }
 
-        // KEEP ONLY THIS PUT METHOD - Remove any duplicate
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ZoneUpdateModel updated)
         {
@@ -52,7 +56,13 @@ namespace DMCPortal.API.Controllers
                 var zone = await _context.Zones.FindAsync(id);
                 if (zone == null) return NotFound();
 
-                // Update only the fields that should be changed
+                // Correct uniqueness check: exclude current record by ID
+                if (_context.Zones.Any(z => z.ZoneName.ToLower() == updated.ZoneName.ToLower() && z.ZoneId != id))
+                {
+                    return Conflict(new { message = "Zone name already exists." });
+                }
+
+                // Update only required fields
                 zone.ZoneName = updated.ZoneName;
                 zone.ZoneUpdatedBy = updated.ZoneUpdatedBy;
                 zone.ZoneUpdatedOn = DateTime.Now;

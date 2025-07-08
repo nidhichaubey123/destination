@@ -21,7 +21,7 @@ namespace DMCPortal.API.Controllers
         {
             try
             {
-                var query = _context.TruvaiQueries.AsQueryable();
+                var query = _context.TruvaiQueries.Where(x => !x.IsDeleted).AsQueryable();
 
                 // Server-side Search
                 if (!string.IsNullOrWhiteSpace(search))
@@ -101,17 +101,17 @@ namespace DMCPortal.API.Controllers
 
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteLead(int id)
+        public IActionResult DeleteLead(int id, [FromQuery] string deletedBy)
         {
             var lead = _context.TruvaiQueries.FirstOrDefault(l => l.Id == id);
             if (lead == null)
-            {
                 return NotFound();
-            }
 
-            _context.TruvaiQueries.Remove(lead);
+            lead.IsDeleted = true;
+            lead.DeletedOn = DateTime.Now;
+            lead.DeletedBy = string.IsNullOrEmpty(deletedBy) ? "System" : deletedBy;
+
             _context.SaveChanges();
-
             return Ok();
         }
 

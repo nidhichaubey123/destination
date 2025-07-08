@@ -49,5 +49,8 @@ public class TruvaiQuery
     public string? ReservationLead { get; set; }
     public string? ReminderOverdue { get; set; }
     public string? HandledBy { get; set; }
+    public bool IsDeleted { get; set; } = false;
+    public DateTime? DeletedOn { get; set; }
+    public string? DeletedBy { get; set; }
 
 }
