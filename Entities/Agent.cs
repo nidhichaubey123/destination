@@ -7,6 +7,9 @@ namespace DMCPortal.API.Entities
         [Key]
         public int AgentId { get; set; }
 
+
+        public string? AppSheetId { get; set; }
+
         [Required]
     
         public string AgentName { get; set; }
@@ -21,6 +24,9 @@ namespace DMCPortal.API.Entities
         public string Zone { get; set; }
 
         public string AgentAddress { get; set; }
+        public bool? IsDeleted { get; set; } = false;
+        public string? DeletedBy {  get; set; }
+         public DateTime? DeletedOn { get; set; }
 
     }
 

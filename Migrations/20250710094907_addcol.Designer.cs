@@ -4,6 +4,7 @@ using DMCPortal.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DMCPortal.API.Migrations
 {
     [DbContext(typeof(DMCPortalDBContext))]
-    partial class DMCPortalDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250710094907_addcol")]
+    partial class addcol
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,15 +51,6 @@ namespace DMCPortal.API.Migrations
 
                     b.Property<string>("AppSheetId")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Zone")
                         .IsRequired()

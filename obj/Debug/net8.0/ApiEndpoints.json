@@ -99,6 +99,54 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "DMCPortal.API.Controllers.AgentController",
+    "Method": "InsertFromAppSheet",
+    "RelativePath": "api/Agent/appsheet-insert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "agent",
+        "Type": "DMCPortal.API.Entities.Agent",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.AgentController",
+    "Method": "DeleteFromAppSheet",
+    "RelativePath": "api/Agent/delete-from-appsheet",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "input",
+        "Type": "DMCPortal.API.Entities.Agent",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.AgentController",
+    "Method": "UpdateFromAppSheet",
+    "RelativePath": "api/Agent/update-from-appsheet",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updated",
+        "Type": "DMCPortal.API.Entities.Agent",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "DMCPortal.API.Controllers.DiscussionTypeController",
     "Method": "GetAll",
     "RelativePath": "api/DiscussionType",

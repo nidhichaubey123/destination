@@ -17,7 +17,7 @@ namespace DMCPortal.API.Controllers
         }
 
         [HttpGet]
-public async Task<ActionResult<IEnumerable<SalesVisitViewModel>>> GetSalesVisits()
+        public async Task<ActionResult<IEnumerable<SalesVisitViewModel>>> GetSalesVisits()
 {
     var sales = await (from s in _context.SalesVisits
                        join u in _context.Users on s.CreatedBy equals u.userId
@@ -236,6 +236,8 @@ public async Task<ActionResult<IEnumerable<SalesVisitViewModel>>> GetSalesVisits
                 return StatusCode(500, ex.Message);
             }
         }
+
+
 
 
     }
