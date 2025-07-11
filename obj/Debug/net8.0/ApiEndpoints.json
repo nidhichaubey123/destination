@@ -123,8 +123,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "input",
-        "Type": "DMCPortal.API.Entities.Agent",
+        "Name": "request",
+        "Type": "DMCPortal.API.Controllers.AppSheetDeleteRequest",
         "IsRequired": true
       }
     ],
@@ -139,8 +139,24 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "updated",
-        "Type": "DMCPortal.API.Entities.Agent",
+        "Name": "request",
+        "Type": "DMCPortal.API.Controllers.AppSheetUpdateRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DMCPortal.API.Controllers.AgentController",
+    "Method": "UpdateFromAppSheetAlternative",
+    "RelativePath": "api/Agent/update-from-appsheet-alt",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "jsonElement",
+        "Type": "System.Text.Json.JsonElement",
         "IsRequired": true
       }
     ],
