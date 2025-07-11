@@ -1,155 +1,167 @@
-﻿using DMCPortal.API.Entities;
+﻿
+using DMCPortal.API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 namespace DMCPortal.API.Controllers
 {
-    [ApiController]
+    // Expose under /api/leads instead of /api/TruvaiQuery
     [Route("api/[controller]")]
-    public class AgentController : ControllerBase
+    [ApiController]
+    public class LeadsController : ControllerBase
     {
         private readonly DMCPortalDBContext _context;
 
-        public AgentController(DMCPortalDBContext context)
+        public LeadsController(DMCPortalDBContext context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Agent>>> GetAll()
-        {
-            return await _context.Agents.ToListAsync();
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Agent>> GetById(int id)
-        {
-            var agent = await _context.Agents.FindAsync(id);
-            if (agent == null) return NotFound();
-            return agent;
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Agent agent)
+        public async Task<IActionResult> GetLeads([FromQuery] string? search = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
-                _context.Agents.Add(agent);
-                await _context.SaveChangesAsync();
-                return Ok(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+                var query = _context.TruvaiQueries.Where(x => !x.IsDeleted).AsQueryable();
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Agent agent)
-        {
-            try
-            {
-                if (id != agent.AgentId)
-                    return BadRequest("Agent ID mismatch.");
+                // Server-side Search
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    query = query.Where(q =>
+                        q.Name.Contains(search) ||
+                        q.Email.Contains(search) ||
+                        q.Phone.Contains(search) ||
+                        q.Destination.Contains(search) ||
+                        q.Zone.Contains(search)
+                    );
+                }
 
-                var exists = await _context.Agents.AnyAsync(a => a.AgentId == id);
-                if (!exists) return NotFound();
+                // Total Count for Pagination
+                var totalRecords = await query.CountAsync();
 
-                _context.Agents.Update(agent);
-                await _context.SaveChangesAsync();
-                return Ok(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+                // Sorting by Name Ascending
+                query = query.OrderBy(q => q.Name);
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var agent = await _context.Agents.FindAsync(id);
-            if (agent == null) return NotFound();
-
-            _context.Agents.Remove(agent);
-            await _context.SaveChangesAsync();
-            return Ok(new { success = true });
-        }
-
-        // ✅ INSERT from AppSheet
-        [HttpPost("appsheet-insert")]
-        public IActionResult InsertFromAppSheet([FromBody] Agent agent)
-        {
-            try
-            {
-                if (agent == null || string.IsNullOrEmpty(agent.AppSheetId))
-                    return BadRequest("Agent or AppSheetId is null");
-
-                var exists = _context.Agents.Any(a =>
-                    a.AgentName.ToLower() == agent.AgentName.ToLower() ||
-                    a.emailAddress.ToLower() == agent.emailAddress.ToLower() ||
-                    a.AppSheetId == agent.AppSheetId);
-
-                if (exists)
-                    return Conflict(new { message = "Agent already exists" });
-
-                _context.Agents.Add(agent);
-                _context.SaveChanges();
-
-                System.IO.File.AppendAllText("C:\\Temp\\agent_log.txt", $"INSERT: {JsonSerializer.Serialize(agent)}\n");
+                // Pagination
+                var leads = await query
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
 
                 return Ok(new
                 {
-                    message = "Inserted via AppSheet",
-                    AgentId = agent.AgentId
+                    TotalRecords = totalRecords,
+                    Leads = leads
                 });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error: {ex.Message}");
+                return StatusCode(500, "Error fetching leads: " + ex.Message);
             }
         }
 
 
-        [HttpPost("update-from-appsheet")]
-        public async Task<IActionResult> UpdateFromAppSheet([FromBody] Agent updated)
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
         {
-            if (string.IsNullOrEmpty(updated.AppSheetId))
-                return BadRequest("AppSheetId is required.");
+            var lead = _context.TruvaiQueries.FirstOrDefault(l => l.Id == id);
 
-            var existing = await _context.Agents
-                .FirstOrDefaultAsync(a => a.AppSheetId == updated.AppSheetId && a.IsDeleted != true);
+            if (lead == null)
+                return NotFound();
 
+            return Ok(lead);
+        }
+
+
+        [HttpPost]
+
+        public async Task<ActionResult<TruvaiQuery>> Create([FromBody] TruvaiQuery query)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            _context.TruvaiQueries.Add(query);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetById), new { id = query.Id }, query);
+        }
+
+
+        // PUT: api/leads/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, TruvaiQuery query)
+        {
+            if (id != query.Id) return BadRequest();
+
+            _context.Entry(query).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteLead(int id, [FromQuery] string deletedBy)
+        {
+            var lead = _context.TruvaiQueries.FirstOrDefault(l => l.Id == id);
+            if (lead == null)
+                return NotFound();
+
+            lead.IsDeleted = true;
+            lead.DeletedOn = DateTime.Now;
+            lead.DeletedBy = string.IsNullOrEmpty(deletedBy) ? "System" : deletedBy;
+
+            _context.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateLead([FromBody] TruvaiQuery query)
+        {
+            if (query == null || query.Id <= 0)
+                return BadRequest("Invalid data");
+
+            var existing = await _context.TruvaiQueries.FindAsync(query.Id);
             if (existing == null)
-                return NotFound("Agent not found.");
+                return NotFound("Lead not found");
 
-            existing.AgentName = updated.AgentName;
-            existing.AgentPoc1 = updated.AgentPoc1;
-            existing.Agency_Company = updated.Agency_Company;
-            existing.phoneno = updated.phoneno;
-            existing.emailAddress = updated.emailAddress;
-            existing.Zone = updated.Zone;
-            existing.AgentAddress = updated.AgentAddress;
+            // Only update fields that were provided - avoid overwriting existing values with defaults
+            existing.Name = query.Name ?? existing.Name;
+            existing.Email = query.Email ?? existing.Email;
+            existing.Phone = query.Phone ?? existing.Phone;
+            existing.Zone = query.Zone ?? existing.Zone;
+            existing.GitFit = query.GitFit ?? existing.GitFit;
+            existing.Destination = query.Destination ?? existing.Destination;
+            existing.PaxCount = query.PaxCount > 0 ? query.PaxCount : existing.PaxCount;
+            existing.Budget = query.Budget > 0 ? query.Budget : existing.Budget;
+            existing.Status = query.Status ?? existing.Status;
+            existing.Source = query.Source ?? existing.Source;
+            existing.QueryCode = query.QueryCode ?? existing.QueryCode;
+            existing.Notes = query.Notes ?? existing.Notes;
 
-            await _context.SaveChangesAsync();
-            return Ok(new { message = "Updated successfully." });
+            // Optional fields - only overwrite if valid
+            if (query.QueryDate != DateTime.MinValue && query.QueryDate != default)
+                existing.QueryDate = query.QueryDate;
+
+            if (query.StartDate.HasValue)
+                existing.StartDate = query.StartDate;
+
+            if (query.EndDate.HasValue)
+                existing.EndDate = query.EndDate;
+
+            if (query.ConversionProbability.HasValue)
+                existing.ConversionProbability = query.ConversionProbability;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error updating lead: " + ex.Message);
+            }
         }
-        [HttpPost("delete-from-appsheet")]
-        public async Task<IActionResult> DeleteFromAppSheet([FromBody] Agent input)
-        {
-            if (string.IsNullOrEmpty(input.AppSheetId))
-                return BadRequest("AppSheetId is required.");
 
-            var agent = await _context.Agents
-                .FirstOrDefaultAsync(a => a.AppSheetId == input.AppSheetId);
 
-            if (agent == null)
-                return NotFound("Agent not found.");
-
-            _context.Agents.Remove(agent);
-            await _context.SaveChangesAsync();
-            return Ok(new { message = "Deleted successfully." });
-        }
     }
 }

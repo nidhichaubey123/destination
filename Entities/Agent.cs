@@ -28,6 +28,8 @@ namespace DMCPortal.API.Entities
         public string? DeletedBy {  get; set; }
          public DateTime? DeletedOn { get; set; }
 
+
+
     }
 
 }
